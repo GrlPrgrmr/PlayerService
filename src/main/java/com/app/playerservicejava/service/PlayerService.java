@@ -1,5 +1,8 @@
 package com.app.playerservicejava.service;
 
+import com.app.playerservicejava.contract.CreatePlayerRequest;
+import com.app.playerservicejava.contract.PlayerResponse;
+import com.app.playerservicejava.mappers.PlayerMapper;
 import com.app.playerservicejava.model.Player;
 import com.app.playerservicejava.model.Players;
 import com.app.playerservicejava.repository.PlayerRepository;
@@ -38,4 +41,27 @@ public class PlayerService {
         return player;
     }
 
+    public Players getPlayersByLastName(String lastName) {
+        Players players = new Players();
+
+        playerRepository.findByLastName(lastName)
+                .forEach(players.getPlayers()::add);
+
+        return players;
+    }
+
+    public Player getTallestPlayer(){
+        return playerRepository.findTopByOrderByHeightDesc().orElseThrow(
+                ()-> new RuntimeException("No Players Found"));
+    }
+
+    public Player createPlayerInRepo(Player player) {
+        return playerRepository.save(player);
+    }
+
+    public PlayerResponse createPlayer(CreatePlayerRequest request) {
+        Player player = PlayerMapper.toModel(request);
+        createPlayerInRepo(player);
+        return PlayerMapper.toResponse(player);
+    }
 }
