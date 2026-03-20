@@ -1,6 +1,7 @@
 package com.app.playerservicejava.service;
 
 import com.app.playerservicejava.contract.CreatePlayerRequest;
+import com.app.playerservicejava.contract.PagedPlayerResponse;
 import com.app.playerservicejava.contract.PlayerResponse;
 import com.app.playerservicejava.mappers.PlayerMapper;
 import com.app.playerservicejava.model.Player;
@@ -9,8 +10,12 @@ import com.app.playerservicejava.repository.PlayerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -63,5 +68,12 @@ public class PlayerService {
         Player player = PlayerMapper.toModel(request);
         createPlayerInRepo(player);
         return PlayerMapper.toResponse(player);
+    }
+
+    public Page<PlayerResponse> getPlayersByCountry(String country,boolean isAdmin, Pageable pageable){
+
+        Page<Player> playerPage = playerRepository.findByBirthCountry(country,pageable);
+
+        return playerPage.map(player -> PlayerMapper.toResponse(player,isAdmin));
     }
 }

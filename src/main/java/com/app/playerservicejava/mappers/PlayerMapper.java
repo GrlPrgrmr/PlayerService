@@ -8,7 +8,8 @@ public class PlayerMapper {
 
     public static Player toModel(CreatePlayerRequest request) {
         Player player = new Player();
-        player.setFirstName(request.getName());
+        player.setFirstName(request.getFirstName());
+        player.setLastName(request.getLastName());
         player.setBirthCountry(request.getCountry());
         return player;
     }
@@ -16,9 +17,27 @@ public class PlayerMapper {
     public static PlayerResponse toResponse(Player player) {
         return new PlayerResponse(
                 player.getPlayerId(),
-                player.getFirstName(),
-                player.getLastName(),
-                player.getBirthCountry()
+                player.getFirstName()+" "+player.getLastName(),
+                player.getBirthCountry(),
+                player.getHeight()
         );
+    }
+
+    public static PlayerResponse toResponse(Player player, boolean isAdmin){
+        if(isAdmin){
+            return new PlayerResponse(
+                    player.getPlayerId(),
+                    player.getFirstName()+" "+player.getLastName(),
+                    player.getBirthCountry(),
+                    player.getHeight()
+            );
+        }else{
+            return new PlayerResponse(
+                    player.getPlayerId(),
+                    player.getFirstName(),
+                    player.getBirthCountry(),
+                    player.getHeight()
+            );
+        }
     }
 }
